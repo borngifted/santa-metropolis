@@ -54,7 +54,7 @@ body {
   right: 20px;
   width: 4px;
   height: 100vh;
-  background: rgba(255, 255, 255, 0.1);
+  background: transparent;
   z-index: 100;
 }
 
@@ -233,6 +233,27 @@ body {
   color: #e3f2fd;
   font-family: 'Helvetica Neue', sans-serif;
   text-shadow: none;
+}
+
+/* Company Styling */
+.company-logo {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+}
+
+.company-points {
+  text-align: left;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.point {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #e3f2fd;
+  margin-bottom: 1rem;
+  padding-left: 1rem;
 }
 
 /* Hero Section */

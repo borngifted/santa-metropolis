@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play } from 'lucide-react';
 import './App.css';
+import './video-grid.css';
+import './loading.css';
 
 const VideoModal = ({ isOpen, onClose, videoUrl }) => {
   if (!isOpen) return null;
@@ -10,7 +12,7 @@ const VideoModal = ({ isOpen, onClose, videoUrl }) => {
     const videoId = url.includes('youtu.be/') 
       ? url.split('youtu.be/')[1].split('?')[0]
       : url.split('v=')[1]?.split('&')[0];
-    return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+    return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&showinfo=0&controls=1&fs=1`;
   };
 
   const embedUrl = getYouTubeEmbedUrl(videoUrl);
@@ -19,17 +21,16 @@ const VideoModal = ({ isOpen, onClose, videoUrl }) => {
     <div className="video-modal-overlay" onClick={onClose}>
       <div className="video-modal-content" onClick={(e) => e.stopPropagation()}>
         <button className="video-modal-close" onClick={onClose}>×</button>
-        <h2 className="video-modal-title">ATLAS THE REINDEER FILM</h2>
+        <h2 className="video-modal-title">ATLAS - A LEVLSTUDIO PRODUCTION</h2>
         <div className="video-container">
           <iframe
             src={embedUrl}
             width="100%"
             height="500"
-            frameBorder="0"
+            style={{ border: 'none', borderRadius: '10px' }}
             allowFullScreen
             allow="autoplay; fullscreen; picture-in-picture"
             title="Atlas The Reindeer Film"
-            style={{ borderRadius: '10px' }}
           />
         </div>
       </div>
@@ -95,15 +96,61 @@ const ScrollProgress = () => {
   );
 };
 
+const LoadingScreen = ({ isLoading }) => {
+  if (!isLoading) return null;
+
+  return (
+    <div className="loading-screen">
+      <div className="loading-content">
+        <div className="loading-gears">
+          <div className="gear gear-1">⚙</div>
+          <div className="gear gear-2">⚙</div>
+          <div className="gear gear-3">⚙</div>
+        </div>
+        <div className="loading-title">LevlStudio</div>
+        <div className="loading-subtitle">Loading ATLAS Demo...</div>
+        <div className="loading-bar-container">
+          <div className="loading-bar">
+            <div className="loading-progress"></div>
+          </div>
+        </div>
+        <div className="loading-snowflakes">
+          {Array.from({ length: 20 }, (_, i) => (
+            <div key={i} className="loading-snowflake" style={{ 
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${3 + Math.random() * 2}s`
+            }}>
+              ❄
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 function App() {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const videoUrl = "https://youtu.be/x5_ahQVnEuA";
 
   const openVideoModal = () => setIsVideoModalOpen(true);
   const closeVideoModal = () => setIsVideoModalOpen(false);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="App">
+      {/* Loading Screen */}
+      <LoadingScreen isLoading={isLoading} />
+      
       {/* Snowflake Particles */}
       <div className="snowflakes">
         {Array.from({ length: 30 }, (_, i) => (
@@ -120,105 +167,176 @@ function App() {
         className="hero-section"
       >
         <div className="hero-content">
-          <h1 className="hero-title">Santa's Metropolis</h1>
-          <h2 className="hero-subtitle">Atlas & The Elves</h2>
-          <p className="hero-tagline">Hidden beneath the polar ice, a steampunk Christmas awaits</p>
+          <div className="company-logo">🎬</div>
+          <h1 className="hero-title">LevlStudio</h1>
+          <h2 className="hero-subtitle">Presenting Our Latest Short Film: ATLAS</h2>
+          <p className="hero-tagline">State-of-the-art storytelling combining human creativity and advanced technology</p>
           <button className="premiere-button" onClick={openVideoModal}>
             <Play size={24} />
-            Watch Premiere
+            Watch ATLAS
           </button>
         </div>
       </VideoSection>
 
-      {/* The Hidden Metropolis */}
+      {/* Who We Are */}
       <VideoSection 
         videoSrc="/metropolis.mp4" 
         className="metropolis-section"
       >
         <div className="story-content">
-          <h2 className="section-title">The Hidden Metropolis</h2>
-          <p className="story-text">
-            Beneath the polar ice lies a secret world where Christmas magic meets steampunk innovation. 
-            Clockwork skyscrapers pierce aurora-lit skies, while brass pipes carry the dreams of children 
-            across neon-lit streets. This is Santa's Metropolis, where the impossible becomes reality.
-          </p>
+          <h2 className="section-title">💡 Who We Are</h2>
+          <div className="company-points">
+            <div className="point">• A next-generation studio fusing AI, VFX, and live-action innovation</div>
+            <div className="point">• A collective of storytellers, technologists, and artists pushing creative limits</div>
+            <div className="point">• Built for speed, scale, and storytelling impact</div>
+          </div>
         </div>
       </VideoSection>
 
-      {/* Atlas the Reindeer */}
+      {/* What We Do */}
       <VideoSection 
         videoSrc="/new_atlas.mp4" 
         className="atlas-section"
       >
         <div className="story-content">
-          <h2 className="section-title">Atlas the Reindeer</h2>
-          <p className="story-text">
-            Meet Atlas, a young reindeer chosen as the next guiding light. His antlers glow with 
-            mysterious energy, and his brave heart will lead the way through the greatest storm 
-            the metropolis has ever seen. The future of Christmas rests in his hooves.
-          </p>
+          <h2 className="section-title">🎥 What We Do</h2>
+          <div className="company-points">
+            <div className="point">• Produce short films, feature films, and original TV series</div>
+            <div className="point">• Develop original IPs with built-in global audience appeal</div>
+            <div className="point">• Use real-time workflows and AI tools to dramatically reduce production costs</div>
+            <div className="point">• Deliver cinematic quality content faster, smarter, and bolder</div>
+          </div>
         </div>
       </VideoSection>
 
-      {/* The Brave Elves */}
+      {/* Who We Do It For */}
       <VideoSection 
         videoSrc="/elves.mp4" 
         className="elves-section"
       >
         <div className="story-content">
-          <h2 className="section-title">The Brave Elves</h2>
-          <p className="story-text">
-            Pip and Jingles, two extraordinary elves with magical powers. Pip can 'whoop' through 
-            time and space, while Jingles can tune into lost reindeer through echoes. Together, 
-            they'll help Atlas save Christmas and protect their beloved metropolis.
-          </p>
+          <h2 className="section-title">🌍 Who We Do It For</h2>
+          <div className="company-points">
+            <div className="point">• For the world market — with no limits in language, culture, or imagination</div>
+            <div className="point">• For streaming platforms, broadcasters, and studios seeking next-gen content</div>
+            <div className="point">• For audiences ready for something new — faster, fresher, and global</div>
+          </div>
         </div>
       </VideoSection>
 
-      {/* The Great Storm */}
+      {/* Our Mission */}
       <VideoSection 
         videoSrc="/new_storm.mp4" 
         className="storm-section"
       >
         <div className="story-content">
-          <h2 className="section-title">The Great Storm</h2>
+          <h2 className="section-title">🚀 Our Mission</h2>
           <p className="story-text">
-            An unprecedented blizzard threatens the metropolis. When a baby reindeer goes missing 
-            in the storm, it's up to Atlas and the elves to brave the tornado winds and bring 
-            everyone home safely. The greatest test of courage begins now.
+            At LevlStudio, we believe stories have no boundaries. We revolutionize entertainment 
+            by combining cutting-edge film technology with human creativity. Our method doesn't 
+            just reduce costs — it revolutionizes revenue potential and unlocks unlimited 
+            narrative possibilities.
           </p>
         </div>
       </VideoSection>
 
-      {/* Santa's Wisdom */}
+      {/* Technology & Innovation */}
       <VideoSection 
-        videoSrc="/new_santa.mp4" 
+        videoSrc="/new_resolution.mp4" 
         className="santa-section"
       >
         <div className="story-content">
-          <h2 className="section-title">Santa's Wisdom</h2>
+          <h2 className="section-title">⚡ Technology & Innovation</h2>
           <p className="story-text">
-            Santa, the wise and funky leader of the metropolis, knows that every generation must 
-            step forward. He believes in Atlas and the power of the next generation to carry 
-            Christmas forward into a bright, magical future.
+            We leverage AI, real-time VFX, and advanced production workflows to create 
+            high-quality content at unprecedented speed and scale. Our technology stack 
+            enables us to produce cinematic experiences that were previously impossible 
+            within traditional budget constraints.
           </p>
         </div>
       </VideoSection>
 
-      {/* The Resolution */}
+      {/* ATLAS - Our Showcase */}
       <VideoSection 
-        videoSrc="/new_resolution.mp4" 
+        videoSrc="/new_santa.mp4" 
         className="resolution-section"
       >
         <div className="story-content">
-          <h2 className="section-title">The Resolution</h2>
+          <h2 className="section-title">✨ ATLAS — A Holiday Tale Like No Other</h2>
           <p className="story-text">
-            Through courage, friendship, and the magic of Christmas, Atlas creates a path of light 
-            through the storm. The metropolis is saved, and a new legend is born. The future of 
-            Christmas is in good hooves, and the magic lives on.
+            Experience the future of filmmaking with ATLAS — filled with magic, heart, and 
+            cutting-edge technology. This short film demonstrates our capability to create 
+            world-class content that rivals major studio productions, delivered faster and 
+            more cost-effectively than ever before.
           </p>
         </div>
       </VideoSection>
+
+      {/* Production Showcase Grid */}
+      <section className="video-grid-section">
+        <div className="grid-content">
+          <h2 className="grid-title">Production Showcase</h2>
+          <p className="grid-subtitle">Additional footage from our ATLAS production</p>
+          <div className="video-grid">
+            <div className="grid-video-item">
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="grid-video"
+              >
+                <source src="/atlas.mp4" type="video/mp4" />
+              </video>
+              <div className="grid-video-overlay">
+                <h3>Character Development</h3>
+              </div>
+            </div>
+            <div className="grid-video-item">
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="grid-video"
+              >
+                <source src="/scene_5.mp4" type="video/mp4" />
+              </video>
+              <div className="grid-video-overlay">
+                <h3>Environment Design</h3>
+              </div>
+            </div>
+            <div className="grid-video-item">
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="grid-video"
+              >
+                <source src="/scene_7.mp4" type="video/mp4" />
+              </video>
+              <div className="grid-video-overlay">
+                <h3>Production Pipeline</h3>
+              </div>
+            </div>
+            <div className="grid-video-item">
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="grid-video"
+              >
+                <source src="/storm.mp4" type="video/mp4" />
+              </video>
+              <div className="grid-video-overlay">
+                <h3>VFX Showcase</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Video Modal */}
       <VideoModal 
