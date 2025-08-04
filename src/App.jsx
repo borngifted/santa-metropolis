@@ -39,18 +39,50 @@ const VideoModal = ({ isOpen, onClose, videoUrl }) => {
 };
 
 const VideoSection = ({ children, videoSrc, className }) => {
+  const [videoError, setVideoError] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+
+  const handleVideoError = (e) => {
+    console.error('Video failed to load:', videoSrc, e);
+    setVideoError(true);
+  };
+
+  const handleVideoLoaded = () => {
+    setVideoLoaded(true);
+  };
+
   return (
     <section className={`video-section ${className}`}>
       <div className="video-background">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="background-video"
-        >
-          <source src={videoSrc} type="video/mp4" />
-        </video>
+        {!videoError ? (
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="background-video"
+            onError={handleVideoError}
+            onLoadedData={handleVideoLoaded}
+            preload="metadata"
+          >
+            <source src={videoSrc} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        ) : (
+          <div 
+            className="background-video video-fallback"
+            style={{
+              background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'rgba(255,255,255,0.5)',
+              fontSize: '1rem'
+            }}
+          >
+            Loading video content...
+          </div>
+        )}
         <div className="video-overlay"></div>
       </div>
       <div className="section-content">
@@ -285,8 +317,11 @@ function App() {
                 loop
                 playsInline
                 className="grid-video"
+                preload="metadata"
+                onError={(e) => console.error('Grid video error:', e)}
               >
                 <source src="/atlas.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
               </video>
               <div className="grid-video-overlay">
                 <h3>Character Development</h3>
@@ -299,8 +334,11 @@ function App() {
                 loop
                 playsInline
                 className="grid-video"
+                preload="metadata"
+                onError={(e) => console.error('Grid video error:', e)}
               >
                 <source src="/scene_5.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
               </video>
               <div className="grid-video-overlay">
                 <h3>Environment Design</h3>
@@ -313,8 +351,11 @@ function App() {
                 loop
                 playsInline
                 className="grid-video"
+                preload="metadata"
+                onError={(e) => console.error('Grid video error:', e)}
               >
                 <source src="/scene_7.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
               </video>
               <div className="grid-video-overlay">
                 <h3>Production Pipeline</h3>
@@ -327,8 +368,11 @@ function App() {
                 loop
                 playsInline
                 className="grid-video"
+                preload="metadata"
+                onError={(e) => console.error('Grid video error:', e)}
               >
                 <source src="/storm.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
               </video>
               <div className="grid-video-overlay">
                 <h3>VFX Showcase</h3>
