@@ -41,6 +41,26 @@ const VideoModal = ({ isOpen, onClose, videoUrl }) => {
 const VideoSection = ({ children, videoSrc, className }) => {
   const [videoError, setVideoError] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   const handleVideoError = (e) => {
     console.error('Video failed to load:', videoSrc, e);
@@ -48,24 +68,43 @@ const VideoSection = ({ children, videoSrc, className }) => {
   };
 
   const handleVideoLoaded = () => {
+    console.log('Video loaded successfully:', videoSrc);
+    setVideoLoaded(true);
+  };
+
+  const handleCanPlay = () => {
     setVideoLoaded(true);
   };
 
   return (
-    <section className={`video-section ${className}`}>
+    <section ref={sectionRef} className={`video-section ${className}`}>
       <div className="video-background">
         {!videoError ? (
           <video
-            autoPlay
+            autoPlay={isVisible}
             muted
             loop
             playsInline
             className="background-video"
             onError={handleVideoError}
             onLoadedData={handleVideoLoaded}
-            preload="metadata"
+            onCanPlay={handleCanPlay}
+            preload={isVisible ? "metadata" : "none"}
+            poster={`data:image/svg+xml;base64,${btoa(`
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+                <rect width="1920" height="1080" fill="url(#grad)"/>
+                <defs>
+                  <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#0a0a0a"/>
+                    <stop offset="50%" style="stop-color:#1a1a2e"/>
+                    <stop offset="100%" style="stop-color:#16213e"/>
+                  </linearGradient>
+                </defs>
+                <text x="960" y="540" font-family="Arial" font-size="48" fill="#e3f2fd" text-anchor="middle" opacity="0.7">LevlStudio</text>
+              </svg>
+            `)}`}
           >
-            <source src={videoSrc} type="video/mp4" />
+            <source src={isVisible ? videoSrc : ''} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         ) : (
@@ -80,7 +119,10 @@ const VideoSection = ({ children, videoSrc, className }) => {
               fontSize: '1rem'
             }}
           >
-            Loading video content...
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🎬</div>
+              <div>LevlStudio</div>
+            </div>
           </div>
         )}
         <div className="video-overlay"></div>
@@ -311,69 +353,73 @@ function App() {
           <p className="grid-subtitle">Additional footage from our ATLAS production</p>
           <div className="video-grid">
             <div className="grid-video-item">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="grid-video"
-                preload="metadata"
-                onError={(e) => console.error('Grid video error:', e)}
+              <div 
+                className="grid-video grid-video-placeholder"
+                style={{
+                  background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'rgba(255,255,255,0.7)',
+                  fontSize: '3rem'
+                }}
               >
-                <source src="/atlas.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+                🎭
+              </div>
               <div className="grid-video-overlay">
                 <h3>Character Development</h3>
               </div>
             </div>
             <div className="grid-video-item">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="grid-video"
-                preload="metadata"
-                onError={(e) => console.error('Grid video error:', e)}
+              <div 
+                className="grid-video grid-video-placeholder"
+                style={{
+                  background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'rgba(255,255,255,0.7)',
+                  fontSize: '3rem'
+                }}
               >
-                <source src="/scene_5.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+                🏗️
+              </div>
               <div className="grid-video-overlay">
                 <h3>Environment Design</h3>
               </div>
             </div>
             <div className="grid-video-item">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="grid-video"
-                preload="metadata"
-                onError={(e) => console.error('Grid video error:', e)}
+              <div 
+                className="grid-video grid-video-placeholder"
+                style={{
+                  background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'rgba(255,255,255,0.7)',
+                  fontSize: '3rem'
+                }}
               >
-                <source src="/scene_7.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+                ⚙️
+              </div>
               <div className="grid-video-overlay">
                 <h3>Production Pipeline</h3>
               </div>
             </div>
             <div className="grid-video-item">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="grid-video"
-                preload="metadata"
-                onError={(e) => console.error('Grid video error:', e)}
+              <div 
+                className="grid-video grid-video-placeholder"
+                style={{
+                  background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'rgba(255,255,255,0.7)',
+                  fontSize: '3rem'
+                }}
               >
-                <source src="/storm.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+                ✨
+              </div>
               <div className="grid-video-overlay">
                 <h3>VFX Showcase</h3>
               </div>

@@ -63,6 +63,16 @@
   transition: filter 0.3s ease;
 }
 
+.grid-video-placeholder {
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+.grid-video-placeholder:hover {
+  transform: scale(1.05);
+}
+
 .grid-video-item:hover .grid-video {
   filter: brightness(1) contrast(1.2);
 }
