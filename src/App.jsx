@@ -3,6 +3,7 @@ import { Play } from 'lucide-react';
 import './App.css';
 import './video-grid.css';
 import './loading.css';
+import './video-background.css';
 
 const VideoModal = ({ isOpen, onClose, videoUrl }) => {
   if (!isOpen) return null;
@@ -38,9 +39,89 @@ const VideoModal = ({ isOpen, onClose, videoUrl }) => {
   );
 };
 
-const VideoSection = ({ children, videoSrc, className }) => {
-  const [videoError, setVideoError] = useState(false);
-  const [videoLoaded, setVideoLoaded] = useState(false);
+const HeroVideoBackground = ({ isVisible }) => {
+  return (
+    <div className="hero-video-background">
+      <video
+        autoPlay={isVisible}
+        muted
+        loop
+        playsInline
+        className="hero-background-video"
+        preload="metadata"
+        onError={(e) => console.error('Hero video error:', e)}
+      >
+        <source src="/scene_1.mp4" type="video/mp4" />
+      </video>
+      <div className="hero-video-overlay"></div>
+    </div>
+  );
+};
+
+const VideoGridBackground = ({ isVisible }) => {
+  const videos = [
+    // Original footage
+    '/metropolis.mp4', '/new_atlas.mp4', '/elves.mp4', '/new_storm.mp4', 
+    '/new_resolution.mp4', '/new_santa.mp4', '/atlas.mp4', '/storm.mp4',
+    // Scene footage
+    '/scene_2.mp4', '/scene_3.mp4', '/scene_4.mp4', '/scene_5.mp4', '/scene_6.mp4',
+    '/scene_7.mp4', '/scene_8.mp4', '/scene_9.mp4', '/scene_10.mp4', '/scene_11.mp4',
+    '/scene_12.mp4', '/scene_13.mp4', '/scene_14.mp4', '/scene_15.mp4', '/scene_16.mp4',
+    '/scene_17.mp4', '/scene_18.mp4', '/scene_19-v.mp4', '/scene_20.mp4', '/scene_21.mp4',
+    // Shot footage
+    '/_shot_1_202507270015.mp4', '/_shot_1_202507270104.mp4', '/_shot_1_202507270106.mp4',
+    '/_shot_2_202507270001.mp4', '/_shot_3_202507270015.mp4', '/_shot_4_202507270015.mp4',
+    '/_shot_5_202507270053.mp4', '/_shot_6_202507270115.mp4', '/_shot_6_202507270118.mp4',
+    '/_shot_7_202507270057.mp4',
+    // Scene compositions
+    '/_scene_dutch_202507260814.mp4', '/_scene_extreme_202507301630.mp4',
+    '/_scene_meeting_202507260813.mp4', '/_scene_spotting_202507271058.mp4', 
+    '/_scene_wolf_202507270120.mp4', '/_scene_wolf_202507301615.mp4',
+    '/_scene_wolf_202507301616.mp4',
+    // Character animations
+    '/The_reindeer_runs_202507270057.mp4', '/The_two_characters_202507260748.mp4',
+    '/The_wolf_is_202507271913.mp4', '/The_wolf_is_202507271917.mp4',
+    '/Wolf_paces_left_202507301827.mp4', '/A_gust_of_202507260745.mp4',
+    '/A_gust_of_202507260748.mp4', '/Lean_down_202507270104.mp4', '/Lean_down_202507270106.mp4'
+  ];
+
+  return (
+    <div className="video-grid-background">
+      {videos.map((videoSrc, index) => (
+        <div key={index} className="grid-video-cell">
+          <video
+            autoPlay={isVisible}
+            muted
+            loop
+            playsInline
+            className="grid-background-video"
+            preload="metadata"
+            onError={(e) => console.error('Grid video error:', videoSrc, e)}
+          >
+            <source src={videoSrc} type="video/mp4" />
+          </video>
+        </div>
+      ))}
+      <div className="video-grid-overlay"></div>
+    </div>
+  );
+};
+
+const HeroSection = ({ children, className }) => {
+  const [isVisible] = useState(true); // Hero is always visible initially
+  const sectionRef = useRef(null);
+
+  return (
+    <section ref={sectionRef} className={`hero-section ${className || ''}`}>
+      <HeroVideoBackground isVisible={isVisible} />
+      <div className="hero-content">
+        {children}
+      </div>
+    </section>
+  );
+};
+
+const VideoSection = ({ children, className }) => {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
 
@@ -62,71 +143,9 @@ const VideoSection = ({ children, videoSrc, className }) => {
     return () => observer.disconnect();
   }, []);
 
-  const handleVideoError = (e) => {
-    console.error('Video failed to load:', videoSrc, e);
-    setVideoError(true);
-  };
-
-  const handleVideoLoaded = () => {
-    console.log('Video loaded successfully:', videoSrc);
-    setVideoLoaded(true);
-  };
-
-  const handleCanPlay = () => {
-    setVideoLoaded(true);
-  };
-
   return (
     <section ref={sectionRef} className={`video-section ${className}`}>
-      <div className="video-background">
-        {!videoError ? (
-          <video
-            autoPlay={isVisible}
-            muted
-            loop
-            playsInline
-            className="background-video"
-            onError={handleVideoError}
-            onLoadedData={handleVideoLoaded}
-            onCanPlay={handleCanPlay}
-            preload={isVisible ? "metadata" : "none"}
-            poster={`data:image/svg+xml;base64,${btoa(`
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
-                <rect width="1920" height="1080" fill="url(#grad)"/>
-                <defs>
-                  <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:#0a0a0a"/>
-                    <stop offset="50%" style="stop-color:#1a1a2e"/>
-                    <stop offset="100%" style="stop-color:#16213e"/>
-                  </linearGradient>
-                </defs>
-                <text x="960" y="540" font-family="Arial" font-size="48" fill="#e3f2fd" text-anchor="middle" opacity="0.7">LevlStudio</text>
-              </svg>
-            `)}`}
-          >
-            <source src={isVisible ? videoSrc : ''} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        ) : (
-          <div 
-            className="background-video video-fallback"
-            style={{
-              background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'rgba(255,255,255,0.5)',
-              fontSize: '1rem'
-            }}
-          >
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🎬</div>
-              <div>LevlStudio</div>
-            </div>
-          </div>
-        )}
-        <div className="video-overlay"></div>
-      </div>
+      <VideoGridBackground isVisible={isVisible} />
       <div className="section-content">
         {children}
       </div>
@@ -236,25 +255,19 @@ function App() {
       <ScrollProgress />
 
       {/* Hero Section */}
-      <VideoSection 
-        videoSrc="/scene_1.mp4" 
-        className="hero-section"
-      >
-        <div className="hero-content">
-          <div className="company-logo">🎬</div>
-          <h1 className="hero-title">LevlStudio</h1>
-          <h2 className="hero-subtitle">Presenting Our Latest Short Film: ATLAS</h2>
-          <p className="hero-tagline">State-of-the-art storytelling combining human creativity and advanced technology</p>
-          <button className="premiere-button" onClick={openVideoModal}>
-            <Play size={24} />
-            Watch ATLAS
-          </button>
-        </div>
-      </VideoSection>
+      <HeroSection>
+        <div className="company-logo">🎬</div>
+        <h1 className="hero-title">LevlStudio</h1>
+        <h2 className="hero-subtitle">Presenting Our Latest Short Film: ATLAS</h2>
+        <p className="hero-tagline">State-of-the-art storytelling combining human creativity and advanced technology</p>
+        <button className="premiere-button" onClick={openVideoModal}>
+          <Play size={24} />
+          Watch ATLAS
+        </button>
+      </HeroSection>
 
       {/* Who We Are */}
       <VideoSection 
-        videoSrc="/metropolis.mp4" 
         className="metropolis-section"
       >
         <div className="story-content">
@@ -269,7 +282,6 @@ function App() {
 
       {/* What We Do */}
       <VideoSection 
-        videoSrc="/new_atlas.mp4" 
         className="atlas-section"
       >
         <div className="story-content">
@@ -285,7 +297,6 @@ function App() {
 
       {/* Who We Do It For */}
       <VideoSection 
-        videoSrc="/elves.mp4" 
         className="elves-section"
       >
         <div className="story-content">
@@ -300,7 +311,6 @@ function App() {
 
       {/* Our Mission */}
       <VideoSection 
-        videoSrc="/new_storm.mp4" 
         className="storm-section"
       >
         <div className="story-content">
@@ -316,7 +326,6 @@ function App() {
 
       {/* Technology & Innovation */}
       <VideoSection 
-        videoSrc="/new_resolution.mp4" 
         className="santa-section"
       >
         <div className="story-content">
@@ -332,7 +341,6 @@ function App() {
 
       {/* ATLAS - Our Showcase */}
       <VideoSection 
-        videoSrc="/new_santa.mp4" 
         className="resolution-section"
       >
         <div className="story-content">
@@ -346,87 +354,6 @@ function App() {
         </div>
       </VideoSection>
 
-      {/* Production Showcase Grid */}
-      <section className="video-grid-section">
-        <div className="grid-content">
-          <h2 className="grid-title">Production Showcase</h2>
-          <p className="grid-subtitle">Additional footage from our ATLAS production</p>
-          <div className="video-grid">
-            <div className="grid-video-item">
-              <div 
-                className="grid-video grid-video-placeholder"
-                style={{
-                  background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'rgba(255,255,255,0.7)',
-                  fontSize: '3rem'
-                }}
-              >
-                🎭
-              </div>
-              <div className="grid-video-overlay">
-                <h3>Character Development</h3>
-              </div>
-            </div>
-            <div className="grid-video-item">
-              <div 
-                className="grid-video grid-video-placeholder"
-                style={{
-                  background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'rgba(255,255,255,0.7)',
-                  fontSize: '3rem'
-                }}
-              >
-                🏗️
-              </div>
-              <div className="grid-video-overlay">
-                <h3>Environment Design</h3>
-              </div>
-            </div>
-            <div className="grid-video-item">
-              <div 
-                className="grid-video grid-video-placeholder"
-                style={{
-                  background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'rgba(255,255,255,0.7)',
-                  fontSize: '3rem'
-                }}
-              >
-                ⚙️
-              </div>
-              <div className="grid-video-overlay">
-                <h3>Production Pipeline</h3>
-              </div>
-            </div>
-            <div className="grid-video-item">
-              <div 
-                className="grid-video grid-video-placeholder"
-                style={{
-                  background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'rgba(255,255,255,0.7)',
-                  fontSize: '3rem'
-                }}
-              >
-                ✨
-              </div>
-              <div className="grid-video-overlay">
-                <h3>VFX Showcase</h3>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Video Modal */}
       <VideoModal 
