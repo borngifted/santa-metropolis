@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Background -->
+  <rect width="32" height="32" fill="#1a1a2e" rx="6"/>
+  
+  <!-- Film camera body -->
+  <rect x="8" y="12" width="16" height="10" fill="#4a90e2" rx="2"/>
+  
+  <!-- Camera lens -->
+  <circle cx="16" cy="17" r="4" fill="#7b68ee"/>
+  <circle cx="16" cy="17" r="2" fill="#1a1a2e"/>
+  
+  <!-- Film strip -->
+  <rect x="4" y="8" width="24" height="3" fill="#9370db"/>
+  <rect x="6" y="8.5" width="2" height="2" fill="#1a1a2e"/>
+  <rect x="10" y="8.5" width="2" height="2" fill="#1a1a2e"/>
+  <rect x="14" y="8.5" width="2" height="2" fill="#1a1a2e"/>
+  <rect x="18" y="8.5" width="2" height="2" fill="#1a1a2e"/>
+  <rect x="22" y="8.5" width="2" height="2" fill="#1a1a2e"/>
+  
+  <!-- L for LevlStudio -->
+  <text x="16" y="28" font-family="Arial, sans-serif" font-size="10" fill="#e3f2fd" text-anchor="middle" font-weight="bold">L</text>
+</svg>
