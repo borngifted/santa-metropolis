@@ -121,7 +121,7 @@ const HeroSection = ({ children, className }) => {
   );
 };
 
-const VideoSection = ({ children, className }) => {
+const VideoSection = ({ children, className, videoSrc }) => {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
 
@@ -145,7 +145,20 @@ const VideoSection = ({ children, className }) => {
 
   return (
     <section ref={sectionRef} className={`video-section ${className}`}>
-      <VideoGridBackground isVisible={isVisible} />
+      <div className="video-background">
+        <video
+          autoPlay={isVisible}
+          muted
+          loop
+          playsInline
+          className="background-video"
+          preload="metadata"
+          onError={(e) => console.error('Video error:', videoSrc, e)}
+        >
+          <source src={videoSrc} type="video/mp4" />
+        </video>
+        <div className="video-overlay"></div>
+      </div>
       <div className="section-content">
         {children}
       </div>
@@ -269,6 +282,7 @@ function App() {
       {/* Who We Are */}
       <VideoSection 
         className="metropolis-section"
+        videoSrc="/metropolis.mp4"
       >
         <div className="story-content">
           <h2 className="section-title">💡 Who We Are</h2>
@@ -283,6 +297,7 @@ function App() {
       {/* What We Do */}
       <VideoSection 
         className="atlas-section"
+        videoSrc="/new_atlas.mp4"
       >
         <div className="story-content">
           <h2 className="section-title">🎥 What We Do</h2>
@@ -298,6 +313,7 @@ function App() {
       {/* Who We Do It For */}
       <VideoSection 
         className="elves-section"
+        videoSrc="/elves.mp4"
       >
         <div className="story-content">
           <h2 className="section-title">🌍 Who We Do It For</h2>
@@ -312,6 +328,7 @@ function App() {
       {/* Our Mission */}
       <VideoSection 
         className="storm-section"
+        videoSrc="/new_storm.mp4"
       >
         <div className="story-content">
           <h2 className="section-title">🚀 Our Mission</h2>
@@ -327,6 +344,7 @@ function App() {
       {/* Technology & Innovation */}
       <VideoSection 
         className="santa-section"
+        videoSrc="/new_santa.mp4"
       >
         <div className="story-content">
           <h2 className="section-title">⚡ Technology & Innovation</h2>
@@ -342,6 +360,7 @@ function App() {
       {/* ATLAS - Our Showcase */}
       <VideoSection 
         className="resolution-section"
+        videoSrc="/new_resolution.mp4"
       >
         <div className="story-content">
           <h2 className="section-title">✨ ATLAS — A Holiday Tale Like No Other</h2>
